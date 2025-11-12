@@ -3,11 +3,9 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
+# Using built-in fonts (no external TTF required)
 
-# План по неделям с задачами и теорией
+# Weekly plan with tasks and theory
 data = [
     ["Week", "Topics and Tasks", "Sample Problems", "Resources (Practice)", "Resources (Theory)"],
 
@@ -75,48 +73,44 @@ data = [
      '<a href="https://docs.pytest.org/en/stable/">pytest</a>',
      '<a href="https://realpython.com/pytest-python-testing/">pytest theory</a>'],
 
-    ["11",
+        ["11",
      "Git and GitHub.",
      "1) Create a repository.\n2) Commit + README.md.\n3) Push to GitHub.",
      '<a href="https://learngitbranching.js.org/">Learn Git Branching</a>',
-     '<a href="https://git-scm.com/book/ru/v2">Pro Git book</a>'],
+            '<a href="https://git-scm.com/book/en/v2">Pro Git book</a>'],
 
     ["12",
      "Interview preparation.",
      "1) Binary search.\n2) Implement a stack.\n3) 5 LeetCode Easy problems.",
      '<a href="https://neetcode.io/">NeetCode</a>',
-     '<a href="https://roadmap.sh/python">Python Roadmap</a><br/>'
-     '<a href="https://refactoring.guru/ru/design-patterns/python">Design Patterns</a>'],
+      '<a href="https://roadmap.sh/python">Python Roadmap</a><br/>'
+      '<a href="https://refactoring.guru/design-patterns/python">Design Patterns</a>'],
 ]
-
-# Создаём документ
+# Create the document
 pdf_file = "python_timeline_with_theory.pdf"
 doc = SimpleDocTemplate(pdf_file, pagesize=A4, rightMargin=10, leftMargin=10, topMargin=20, bottomMargin=20)
 styles = getSampleStyleSheet()
-
-styles.add(ParagraphStyle(name='Russian', fontName='DejaVuSans', fontSize=9))
-
-# Преобразуем все ячейки (кроме заголовка) в Paragraph для корректного переноса строк
+# Convert all cells (except header) into Paragraphs for proper wrapping
 for row in range(1, len(data)):
     for col in range(len(data[row])):
-        data[row][col] = Paragraph(str(data[row][col]), styles['Russian'])
+        data[row][col] = Paragraph(str(data[row][col]), styles['BodyText'])
 
-# Таблица
+# Table
 table = Table(data, colWidths=[40, 110, 150, 110, 110])
 table.setStyle(TableStyle([
     ("BACKGROUND", (0, 0), (-1, 0), colors.darkblue),
     ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
     ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-    ("FONTNAME", (0, 0), (-1, 0), "DejaVuSans"),
+    ("FONTNAME", (0, 0), (-1, 0), "Helvetica"),
     ("FONTSIZE", (0, 0), (-1, 0), 9),
     ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
     ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
-    ("FONTNAME", (0, 1), (-1, -1), "DejaVuSans"),
+    ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
     ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
     ("WORDWRAP", (0, 0), (-1, -1), True),
 ]))
 
-# Сохраняем PDF
+# Save PDF
 doc.build([table])
 
-print(f"PDF успешно создан: {pdf_file}")
+print(f"PDF created: {pdf_file}")
